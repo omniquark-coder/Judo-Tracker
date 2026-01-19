@@ -3,285 +3,336 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Judo Mastery Tracker</title>
+    <title>Judo Mastery v3.0</title>
     <style>
-        :root { --primary: #0055A4; --bg: #f0f2f5; --card: #ffffff; --text: #333; --accent: #D32F2F; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; padding-bottom: 80px; }
+        :root { --primary: #0055A4; --bg: #f8f9fa; --card: #ffffff; --text: #2c3e50; --border: #e9ecef; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; padding-bottom: 100px; }
         
-        /* Mobile Sticky Header */
-        .header { position: sticky; top: 0; background: var(--bg); z-index: 100; padding-bottom: 10px; border-bottom: 1px solid #ddd; }
-        .nav-controls { display: flex; gap: 10px; margin-top: 10px; }
-        select { flex-grow: 1; padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem; background: white; }
-        .btn-icon { background: white; border: 1px solid #ccc; padding: 10px; border-radius: 8px; cursor: pointer; }
-
+        /* Sticky Controls */
+        .controls-area { position: sticky; top: 0; background: var(--bg); z-index: 1000; padding: 10px 0; border-bottom: 1px solid #ddd; }
+        .control-row { display: flex; gap: 8px; margin-bottom: 8px; }
+        select, input { padding: 10px; border-radius: 8px; border: 1px solid #ced4da; font-size: 14px; background: white; flex-grow: 1; }
+        .btn-icon { width: 42px; flex-shrink: 0; cursor: pointer; background: white; border: 1px solid #ced4da; border-radius: 8px; font-size: 18px; }
+        
         /* Dashboard */
-        .dashboard-card { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        .progress-bar { background: #e0e0e0; border-radius: 8px; height: 12px; width: 100%; overflow: hidden; margin-top: 5px; }
-        .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.5s ease-out; }
+        .stats-card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .progress-container { background: #e9ecef; height: 8px; border-radius: 4px; margin-top: 5px; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s; }
+
+        /* Belt Sections */
+        .belt-section { margin-bottom: 30px; }
+        .belt-header { font-size: 1.1em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 3px solid; display: flex; justify-content: space-between; align-items: center; }
         
-        /* Techniques */
-        .belt-section { margin-bottom: 25px; }
-        .belt-title { font-size: 1.2rem; margin-bottom: 10px; padding-left: 10px; border-left: 5px solid #ccc; display: flex; justify-content: space-between; align-items: center; }
-        .belt-white { border-color: #999; }
-        .belt-yellow { border-color: #FFD700; }
-        .belt-orange { border-color: #FF8C00; }
-        .belt-green { border-color: #228B22; }
-        .belt-blue { border-color: #0055A4; }
-        .belt-brown { border-color: #8B4513; }
+        /* Belt Colors */
+        .b-white { border-color: #bdc3c7; color: #7f8c8d; }
+        .b-yellow { border-color: #f1c40f; color: #d4ac0d; }
+        .b-orange { border-color: #e67e22; color: #d35400; }
+        .b-green { border-color: #27ae60; color: #219150; }
+        .b-blue { border-color: #2980b9; color: #0055A4; }
+        .b-brown { border-color: #795548; color: #5d4037; }
 
-        .tech-card { background: white; border-radius: 10px; margin-bottom: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .tech-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: white; }
-        .tech-name { font-weight: 600; font-size: 1.05rem; }
-        .tech-score { font-size: 0.9rem; font-weight: bold; color: var(--primary); background: #e3f2fd; padding: 4px 8px; border-radius: 6px; }
+        /* Technique Card */
+        .tech-card { background: white; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-left: 4px solid transparent; transition: transform 0.2s; }
+        .tech-card.mastered { opacity: 0.6; order: 99; } /* Push to bottom */
+        .tech-card.priority { border-left-color: #e74c3c; } /* Needs work */
         
-        .details-panel { display: none; padding: 15px; background: #fafafa; border-top: 1px solid #eee; }
-        .details-panel.open { display: block; }
+        .tech-head { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .tech-info strong { display: block; font-size: 1em; margin-bottom: 2px; }
+        .tech-cat { font-size: 0.75em; color: #7f8c8d; text-transform: uppercase; background: #f1f3f5; padding: 2px 6px; border-radius: 4px; }
+        .score-badge { font-weight: bold; font-size: 0.9em; padding: 4px 8px; border-radius: 6px; min-width: 30px; text-align: center; }
+        .s-low { background: #fadbd8; color: #c0392b; }
+        .s-mid { background: #fcf3cf; color: #f39c12; }
+        .s-high { background: #d5f5e3; color: #27ae60; }
 
-        /* Sliders */
-        .slider-row { margin-bottom: 15px; }
-        .slider-label { display: flex; justify-content: space-between; font-size: 0.85rem; color: #666; margin-bottom: 5px; }
-        input[type="range"] { width: 100%; height: 6px; background: #ddd; border-radius: 3px; outline: none; -webkit-appearance: none; }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: var(--primary); border-radius: 50%; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        /* Details */
+        .tech-body { padding: 0 15px 15px; display: none; border-top: 1px solid #f1f3f5; }
+        .tech-body.open { display: block; animation: slideDown 0.2s ease-out; }
+        @keyframes slideDown { from { opacity:0; transform:translateY(-5px); } to { opacity:1; transform:translateY(0); } }
 
-        /* Video Section */
-        .video-container { margin-top: 15px; padding-top: 15px; border-top: 1px dashed #ccc; }
-        .video-btn { display: inline-block; text-decoration: none; background: #c4302b; color: white; padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; margin-right: 10px; }
-        .edit-link-btn { background: none; border: none; color: #666; text-decoration: underline; font-size: 0.8rem; cursor: pointer; }
-        .custom-link-input { width: 70%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; display: none; }
-
+        .slider-group { margin-top: 15px; }
+        .slider-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.85em; color: #555; margin-bottom: 8px; }
+        input[type=range] { padding: 0; margin: 0 10px; flex-grow: 1; height: 4px; }
+        
+        .action-row { margin-top: 15px; padding-top: 10px; border-top: 1px dashed #eee; display: flex; gap: 10px; }
+        .btn-link { background: #e74c3c; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 0.8em; font-weight: bold; }
+        .btn-edit { background: none; border: none; text-decoration: underline; color: #7f8c8d; cursor: pointer; font-size: 0.8em; }
+        
+        #input-link { display: none; width: 100%; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <div class="nav-controls">
-        <select id="userSelect" onchange="switchUser()">
-            <option value="Dad">Dad (Blue Belt)</option>
-            <option value="Son1">Son 1</option>
-            <option value="Son2">Son 2</option>
+<div class="controls-area">
+    <div class="control-row">
+        <select id="userSelect" onchange="app.switchUser()">
+            <option value="Dad">🥋 Dad (Blue Belt)</option>
+            <option value="Son1">👦 Son 1</option>
+            <option value="Son2">👦 Son 2</option>
         </select>
-        <button class="btn-icon" onclick="exportData()" title="Backup Data">💾</button>
+        <button class="btn-icon" onclick="app.exportData()" title="Backup">💾</button>
+    </div>
+    <div class="control-row">
+        <input type="text" id="searchInput" placeholder="Find technique..." onkeyup="app.render()">
+        <select id="sortSelect" onchange="app.render()" style="max-width: 110px;">
+            <option value="belt">Sort: Belt</option>
+            <option value="weakest">Focus Mode</option>
+        </select>
     </div>
 </div>
 
-<div class="dashboard-card">
-    <h2 style="margin-top:0;">🥋 Progress: <span id="currentBeltDisplay">Blue Belt</span></h2>
-    <div style="display:flex; justify-content:space-between; font-size:0.9rem; margin-bottom:5px;">
-        <span>Total Mastery XP</span>
-        <span><strong id="totalXP">0</strong> / <span id="maxXP">0</span></span>
+<div class="stats-card">
+    <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+        <span style="font-weight:600; color:var(--primary)">Curriculum Progress</span>
+        <span id="xpDisplay">0%</span>
     </div>
-    <div class="progress-bar"><div id="masteryBar" class="progress-fill"></div></div>
-    
-    <div style="margin-top: 15px; background: #e8f5e9; padding: 12px; border-radius: 8px; border-left: 4px solid #2e7d32;">
-        <small style="color:#2e7d32; font-weight:bold;">NEXT PRIORITY</small>
-        <div id="recommendation" style="font-weight:500; margin-top:4px;">Analyze data...</div>
+    <div class="progress-container">
+        <div id="progressBar" class="progress-bar"></div>
     </div>
 </div>
 
-<div id="syllabusContainer"></div>
+<div id="appContainer"></div>
 
 <script>
-// --- DATA: Syllabus with Pre-loaded Video Links ---
-const syllabus = [
-    { belt: "Blue-Brown (1K)", color: "belt-blue", techs: [
-        {name: "Koshi-guruma", url: "https://www.youtube.com/watch?v=r8VOz9O4_XM"},
-        {name: "Harai-makikomi", url: "https://www.youtube.com/watch?v=7fbIgcqL4T4"},
-        {name: "O-soto-makikomi", url: "https://www.youtube.com/watch?v=igTlq4AqBRw"},
-        {name: "Sumi-otoshi", url: "https://www.youtube.com/watch?v=PzDzYnDd8ag"},
-        {name: "Ura-nage", url: "https://www.youtube.com/watch?v=8wCHOfR2oSw"},
-        {name: "Yoko-guruma", url: "https://www.youtube.com/watch?v=950EfJkVHsI"},
-        {name: "Ko-uchi-makikomi", url: "https://www.youtube.com/watch?v=ArXVbqTCRFc"},
-        {name: "Yoko-wakare", url: "https://www.youtube.com/watch?v=Otu-47OaiRg"},
-        {name: "Ryote-jime", url: "https://www.youtube.com/watch?v=0a1Q4Vp37QA"},
-        {name: "Ashi-gatame", url: "https://www.youtube.com/watch?v=4YAqJoxNewM"}, 
-        {name: "Sode-guruma-jime", url: "https://www.youtube.com/watch?v=qQjiH3hJWg4"},
-        {name: "Te-gatame", url: "https://www.youtube.com/watch?v=MnOQdY1Yy1Y"},
-        {name: "Tsukkomi-jime", url: "https://www.youtube.com/watch?v=_lIZyxdgJLs"},
-        {name: "Sankaku-gatame", url: "https://www.youtube.com/watch?v=fcnFgWDY0p0"},
-        {name: "Sankaku-jime", url: "https://www.youtube.com/watch?v=zEiEEN4b0aM"}
+// --- FULL SYLLABUS DATA (White to Brown) ---
+const syllabusData = [
+    // 6th Kyu to 5th Kyu (White-Yellow) [cite: 224-231]
+    { belt: "White-Yellow", css: "b-white", list: [
+        { n: "Tsuri-goshi", c: "Koshi-waza" },
+        { n: "Ko-soto-gari", c: "Ashi-waza" },
+        { n: "Hiza-guruma", c: "Ashi-waza" },
+        { n: "Uki-otoshi", c: "Te-waza" },
+        { n: "Tai-otoshi", c: "Te-waza" },
+        { n: "O-uchi-gari", c: "Ashi-waza" },
+        { n: "O-soto-otoshi", c: "Ashi-waza" },
+        { n: "Ko-uchi-gari", c: "Ashi-waza" },
+        { n: "Kesa-gatame", c: "Osaekomi" },
+        { n: "Kata-gatame", c: "Osaekomi" },
+        { n: "Kami-shiho-gatame", c: "Osaekomi" }
     ]},
-    { belt: "Green-Blue (2K)", color: "belt-green", techs: [
-        {name: "Hane-goshi", url: "https://www.youtube.com/results?search_query=hane+goshi+judo"},
-        {name: "Ushiro-goshi", url: ""},
-        {name: "Obi-tori-gaeshi", url: ""},
-        {name: "Seoi-otoshi", url: ""},
-        {name: "Uchi-mata", url: "https://www.youtube.com/results?search_query=uchi+mata+judo"},
-        {name: "Hane-goshi-gaeshi", url: ""},
-        {name: "Ko-uchi-gaeshi", url: ""},
-        {name: "Uchi-mata-gaeshi", url: ""},
-        {name: "Hadaka-jime", url: ""},
-        {name: "Okuri-eri-jime", url: ""},
-        {name: "Kataha-jime", url: ""}
+    // 5th to 4th Kyu (Yellow-Orange) [cite: 254-257]
+    { belt: "Yellow-Orange", css: "b-yellow", list: [
+        { n: "Ippon-seoi-nage", c: "Te-waza" },
+        { n: "De-ashi-harai", c: "Ashi-waza" },
+        { n: "Sasae-tsurikomi-ashi", c: "Ashi-waza" },
+        { n: "O-soto-gari", c: "Ashi-waza" },
+        { n: "Seoi-nage", c: "Te-waza" },
+        { n: "Tsurikomi-goshi", c: "Koshi-waza" },
+        { n: "Okuri-ashi-harai", c: "Ashi-waza" },
+        { n: "Ushiro-kesa-gatame", c: "Osaekomi" },
+        { n: "Tate-shiho-gatame", c: "Osaekomi" },
+        { n: "Uki-gatame", c: "Osaekomi" }
+    ]},
+    // 4th to 3rd Kyu (Orange-Green) [cite: 280-282]
+    { belt: "Orange-Green", css: "b-orange", list: [
+        { n: "Harai-goshi", c: "Koshi-waza" },
+        { n: "Tani-otoshi", c: "Sutemi-waza" },
+        { n: "Sode-tsurikomi-goshi", c: "Koshi-waza" },
+        { n: "Yoko-tomoe-nage", c: "Sutemi-waza" },
+        { n: "Yoko-otoshi", c: "Sutemi-waza" },
+        { n: "Harai-tsurikomi-ashi", c: "Ashi-waza" },
+        { n: "Sumi-gaeshi", c: "Sutemi-waza" },
+        { n: "Tomoe-nage", c: "Sutemi-waza" },
+        { n: "Juji-gatame", c: "Kansetsu" },
+        { n: "Ude-garami", c: "Kansetsu" },
+        { n: "Nami-juji-jime", c: "Shime-waza" },
+        { n: "Gyaku-juji-jime", c: "Shime-waza" },
+        { n: "Kata-juji-jime", c: "Shime-waza" }
+    ]},
+    // 3rd to 2nd Kyu (Green-Blue) [cite: 292-293]
+    { belt: "Green-Blue", css: "b-green", list: [
+        { n: "Hane-goshi", c: "Koshi-waza" },
+        { n: "Ushiro-goshi", c: "Koshi-waza" },
+        { n: "Obi-tori-gaeshi", c: "Sutemi-waza" },
+        { n: "Seoi-otoshi", c: "Te-waza" },
+        { n: "Uchi-mata", c: "Ashi-waza" },
+        { n: "Hane-goshi-gaeshi", c: "Te-waza" },
+        { n: "Ko-uchi-gaeshi", c: "Ashi-waza" },
+        { n: "Uchi-mata-gaeshi", c: "Ashi-waza" },
+        { n: "Hadaka-jime", c: "Shime-waza" },
+        { n: "Okuri-eri-jime", c: "Shime-waza" },
+        { n: "Kataha-jime", c: "Shime-waza" }
+    ]},
+    // 2nd to 1st Kyu (Blue-Brown) [cite: 304-305]
+    { belt: "Blue-Brown", css: "b-blue", list: [
+        { n: "Koshi-guruma", c: "Koshi-waza" },
+        { n: "Harai-makikomi", c: "Sutemi-waza" },
+        { n: "O-soto-makikomi", c: "Sutemi-waza" },
+        { n: "Sumi-otoshi", c: "Te-waza" },
+        { n: "Ura-nage", c: "Sutemi-waza" },
+        { n: "Yoko-guruma", c: "Sutemi-waza" },
+        { n: "Ko-uchi-makikomi", c: "Sutemi-waza" },
+        { n: "Yoko-wakare", c: "Sutemi-waza" },
+        { n: "Ryote-jime", c: "Shime-waza" },
+        { n: "Ashi-gatame", c: "Kansetsu" },
+        { n: "Sode-guruma-jime", c: "Shime-waza" },
+        { n: "Te-gatame", c: "Kansetsu" },
+        { n: "Tsukkomi-jime", c: "Shime-waza" },
+        { n: "Sankaku-gatame", c: "Kansetsu" },
+        { n: "Sankaku-jime", c: "Shime-waza" }
     ]}
-    // Add older belts here if needed...
 ];
 
-let currentUser = "Dad";
-let userData = {};
+const app = {
+    user: "Dad",
+    data: {},
 
-function init() {
-    const stored = localStorage.getItem("judoTrackerData_v2");
-    if (stored) {
-        userData = JSON.parse(stored);
-    } else {
-        userData = { "Dad": {}, "Son1": {}, "Son2": {} };
-    }
-    renderSyllabus();
-    updateStats();
-}
+    init() {
+        const stored = localStorage.getItem("judoTrackerV3");
+        this.data = stored ? JSON.parse(stored) : { "Dad": {}, "Son1": {}, "Son2": {} };
+        this.render();
+    },
 
-function saveData() {
-    localStorage.setItem("judoTrackerData_v2", JSON.stringify(userData));
-    updateStats();
-}
+    switchUser() {
+        this.user = document.getElementById("userSelect").value;
+        this.render();
+    },
 
-function switchUser() {
-    currentUser = document.getElementById("userSelect").value;
-    renderSyllabus();
-    updateStats();
-}
+    getScore(tech) {
+        const t = this.data[this.user][tech];
+        if (!t) return 0;
+        return ((parseInt(t.migi||0) + parseInt(t.hidari||0) + parseInt(t.kuzushi||0) + parseInt(t.trans||0)) / 4).toFixed(1);
+    },
 
-function getMetric(tech, metric) {
-    if (!userData[currentUser][tech]) return 0;
-    return userData[currentUser][tech][metric] || 0;
-}
-
-function getCustomLink(tech) {
-    if (!userData[currentUser][tech]) return "";
-    return userData[currentUser][tech]['customLink'] || "";
-}
-
-function setMetric(tech, metric, val) {
-    if (!userData[currentUser][tech]) userData[currentUser][tech] = {};
-    userData[currentUser][tech][metric] = parseInt(val);
-    document.getElementById(`lbl-${tech}-${metric}`).innerText = val;
-    
-    // Update header avg immediately
-    const t = userData[currentUser][tech];
-    const avg = ((t.migi||0) + (t.hidari||0) + (t.kuzushi||0) + (t.trans||0)) / 4;
-    document.getElementById(`score-${tech}`).innerText = avg.toFixed(1);
-    
-    saveData();
-}
-
-function saveCustomLink(tech, url) {
-    if (!userData[currentUser][tech]) userData[currentUser][tech] = {};
-    userData[currentUser][tech]['customLink'] = url;
-    saveData();
-    renderSyllabus(); // Re-render to show updated link button
-}
-
-function toggleDetails(id) {
-    document.getElementById(id).classList.toggle("open");
-}
-
-function toggleLinkInput(id) {
-    const el = document.getElementById(id);
-    el.style.display = el.style.display === "block" ? "none" : "block";
-}
-
-function renderSyllabus() {
-    const container = document.getElementById("syllabusContainer");
-    container.innerHTML = "";
-
-    syllabus.forEach(level => {
-        const section = document.createElement("div");
-        section.className = "belt-section";
+    setVal(tech, aspect, val) {
+        if (!this.data[this.user][tech]) this.data[this.user][tech] = {};
+        this.data[this.user][tech][aspect] = val;
         
-        let html = `<div class="belt-title ${level.color}"><span>${level.belt}</span></div>`;
+        // Update display immediately without full re-render
+        document.getElementById(`val-${tech}-${aspect}`).innerText = val;
+        const newScore = this.getScore(tech);
+        const badge = document.getElementById(`badge-${tech}`);
+        badge.innerText = newScore;
+        badge.className = `score-badge ${this.getBadgeClass(newScore)}`;
         
-        level.techs.forEach(t => {
-            const techID = t.name.replace(/\s/g, '');
-            const rMigi = getMetric(t.name, 'migi');
-            const rHidari = getMetric(t.name, 'hidari');
-            const rKuzushi = getMetric(t.name, 'kuzushi');
-            const rTrans = getMetric(t.name, 'trans');
-            const avg = ((rMigi + rHidari + rKuzushi + rTrans) / 4).toFixed(1);
-            
-            // Link Logic: Prefer custom, then default, then search
-            const customUrl = getCustomLink(t.name);
-            const activeUrl = customUrl || t.url || `https://www.youtube.com/results?search_query=judo+${t.name}`;
-            
-            html += `
-            <div class="tech-card">
-                <div class="tech-header" onclick="toggleDetails('panel-${techID}')">
-                    <span class="tech-name">${t.name}</span>
-                    <span class="tech-score" id="score-${t.name}">${avg}</span>
-                </div>
-                <div id="panel-${techID}" class="details-panel">
-                    ${renderSlider(t.name, 'migi', 'Right (Migi)', rMigi)}
-                    ${renderSlider(t.name, 'hidari', 'Left (Hidari)', rHidari)}
-                    ${renderSlider(t.name, 'kuzushi', 'Off-Balance', rKuzushi)}
-                    ${renderSlider(t.name, 'trans', 'Transition', rTrans)}
-                    
-                    <div class="video-container">
-                        <a href="${activeUrl}" target="_blank" class="video-btn">▶ Watch Video</a>
-                        <button class="edit-link-btn" onclick="toggleLinkInput('link-input-${techID}')">Change Link</button>
-                        <input type="text" id="link-input-${techID}" class="custom-link-input" placeholder="Paste YouTube URL here..." 
-                            onchange="saveCustomLink('${t.name}', this.value)" value="${customUrl}">
-                    </div>
-                </div>
-            </div>`;
+        this.save();
+        this.updateProgress();
+    },
+
+    saveLink(tech, url) {
+        if (!this.data[this.user][tech]) this.data[this.user][tech] = {};
+        this.data[this.user][tech].customLink = url;
+        this.save();
+        this.render(); // Re-render to update link button
+    },
+
+    toggleLinkInput(id) {
+        const el = document.getElementById(id);
+        el.style.display = el.style.display === "block" ? "none" : "block";
+    },
+
+    save() {
+        localStorage.setItem("judoTrackerV3", JSON.stringify(this.data));
+    },
+
+    exportData() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.data));
+        const a = document.createElement('a');
+        a.href = dataStr;
+        a.download = "judo_mastery_backup.json";
+        a.click();
+    },
+
+    getBadgeClass(score) {
+        if (score < 2) return "s-low";
+        if (score < 4) return "s-mid";
+        return "s-high";
+    },
+
+    updateProgress() {
+        let total = 0, max = 0;
+        syllabusData.forEach(belt => {
+            belt.list.forEach(t => {
+                max += 20; // 4 aspects * 5
+                const d = this.data[this.user][t.n];
+                if(d) total += (parseInt(d.migi||0) + parseInt(d.hidari||0) + parseInt(d.kuzushi||0) + parseInt(d.trans||0));
+            });
         });
-        
-        section.innerHTML = html;
-        container.appendChild(section);
-    });
-}
+        const pct = Math.round((total/max)*100);
+        document.getElementById('progressBar').style.width = pct + "%";
+        document.getElementById('xpDisplay').innerText = pct + "% Mastery";
+    },
 
-function renderSlider(tech, metric, label, val) {
-    return `
-    <div class="slider-row">
-        <div class="slider-label"><span>${label}</span> <strong id="lbl-${tech}-${metric}">${val}</strong></div>
-        <input type="range" min="0" max="5" value="${val}" oninput="setMetric('${tech}', '${metric}', this.value)">
-    </div>`;
-}
+    toggleDetails(id) {
+        const el = document.getElementById(id);
+        const isOpen = el.classList.contains('open');
+        // Close all others
+        document.querySelectorAll('.tech-body').forEach(b => b.classList.remove('open'));
+        if(!isOpen) el.classList.add('open');
+    },
 
-function updateStats() {
-    let totalXP = 0;
-    let maxXP = 0;
-    let lowestTech = null;
-    let lowestScore = 6;
+    render() {
+        const container = document.getElementById("appContainer");
+        const search = document.getElementById("searchInput").value.toLowerCase();
+        const sortMode = document.getElementById("sortSelect").value;
+        container.innerHTML = "";
 
-    syllabus.forEach(level => {
-        level.techs.forEach(t => {
-            maxXP += 20;
-            if (userData[currentUser][t.name]) {
-                const d = userData[currentUser][t.name];
-                const sum = (d.migi||0) + (d.hidari||0) + (d.kuzushi||0) + (d.trans||0);
-                totalXP += sum;
-                
-                const avg = sum/4;
-                if (avg < 3 && avg < lowestScore) {
-                    lowestScore = avg;
-                    lowestTech = t.name;
-                }
-            } else {
-                if (lowestScore > 0) { lowestScore = 0; lowestTech = t.name; }
+        syllabusData.forEach(belt => {
+            // Filter list by search
+            let techniques = belt.list.filter(t => t.n.toLowerCase().includes(search));
+            if (techniques.length === 0) return;
+
+            // Sort logic: "Weakest" mode brings score 0-2 to top, 5 to bottom
+            if (sortMode === 'weakest') {
+                techniques.sort((a, b) => this.getScore(a.n) - this.getScore(b.n));
             }
+
+            // Create Belt Section
+            const beltDiv = document.createElement("div");
+            beltDiv.className = "belt-section";
+            beltDiv.innerHTML = `<div class="belt-header ${belt.css}"><span>${belt.belt}</span> <small>${techniques.length} Techs</small></div>`;
+
+            // Render cards
+            techniques.forEach(t => {
+                const score = this.getScore(t.n);
+                const d = this.data[this.user][t.n] || {};
+                const link = d.customLink || `https://www.youtube.com/results?search_query=judo+${t.n.replace(/\s/g, '+')}+tutorial`;
+                const techId = t.n.replace(/\s/g, '');
+                
+                // Add class for visual sorting (fades out mastered items)
+                const masterClass = score >= 4.0 ? "mastered" : "priority";
+
+                const card = `
+                <div class="tech-card ${masterClass}">
+                    <div class="tech-head" onclick="app.toggleDetails('b-${techId}')">
+                        <div class="tech-info">
+                            <strong>${t.n}</strong>
+                            <span class="tech-cat">${t.c}</span>
+                        </div>
+                        <div id="badge-${t.n}" class="score-badge ${this.getBadgeClass(score)}">${score}</div>
+                    </div>
+                    <div id="b-${techId}" class="tech-body">
+                        <div class="slider-group">
+                            ${this.renderSlider(t.n, 'migi', 'Migi (Right)', d.migi)}
+                            ${this.renderSlider(t.n, 'hidari', 'Hidari (Left)', d.hidari)}
+                            ${this.renderSlider(t.n, 'kuzushi', 'Kuzushi', d.kuzushi)}
+                            ${this.renderSlider(t.n, 'trans', 'Transition', d.trans)}
+                        </div>
+                        <div class="action-row">
+                            <a href="${link}" target="_blank" class="btn-link">▶ Video</a>
+                            <button class="btn-edit" onclick="app.toggleLinkInput('in-${techId}')">Edit Link</button>
+                        </div>
+                        <input type="text" id="in-${techId}" style="display:none; width:90%; margin-top:10px;" 
+                               placeholder="Paste YouTube URL..." onchange="app.saveLink('${t.n}', this.value)" value="${d.customLink||''}">
+                    </div>
+                </div>`;
+                beltDiv.insertAdjacentHTML('beforeend', card);
+            });
+            container.appendChild(beltDiv);
         });
-    });
+        this.updateProgress();
+    },
 
-    document.getElementById("totalXP").innerText = totalXP;
-    document.getElementById("maxXP").innerText = maxXP;
-    document.getElementById("masteryBar").style.width = (totalXP / maxXP * 100) + "%";
-    
-    document.getElementById("recommendation").innerHTML = lowestTech 
-        ? `Focus on: ${lowestTech} (Avg: ${lowestScore.toFixed(1)})`
-        : "All systems green! Ready for grading.";
-}
+    renderSlider(tech, key, label, val = 0) {
+        return `
+        <div class="slider-row">
+            <span>${label}</span>
+            <input type="range" min="0" max="5" value="${val}" oninput="app.setVal('${tech}', '${key}', this.value)">
+            <span id="val-${tech}-${key}" style="width:10px; font-weight:bold;">${val}</span>
+        </div>`;
+    }
+};
 
-function exportData() {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(userData));
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "judo_backup.json");
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-}
-
-init();
+app.init();
 </script>
 
 </body>
