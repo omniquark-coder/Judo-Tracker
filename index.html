@@ -3,61 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Judo Mastery v3.0</title>
+    <title>Judo Mastery v4.0</title>
     <style>
-        :root { --primary: #0055A4; --bg: #f8f9fa; --card: #ffffff; --text: #2c3e50; --border: #e9ecef; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; padding-bottom: 100px; }
+        :root { --primary: #003366; --bg: #f4f6f8; --card: #ffffff; --text: #2c3e50; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; padding-bottom: 80px; }
         
-        /* Sticky Controls */
+        /* Sticky Header */
         .controls-area { position: sticky; top: 0; background: var(--bg); z-index: 1000; padding: 10px 0; border-bottom: 1px solid #ddd; }
         .control-row { display: flex; gap: 8px; margin-bottom: 8px; }
-        select, input { padding: 10px; border-radius: 8px; border: 1px solid #ced4da; font-size: 14px; background: white; flex-grow: 1; }
-        .btn-icon { width: 42px; flex-shrink: 0; cursor: pointer; background: white; border: 1px solid #ced4da; border-radius: 8px; font-size: 18px; }
+        select, input { padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; background: white; flex-grow: 1; }
+        .btn-icon { width: 44px; cursor: pointer; background: white; border: 1px solid #ccc; border-radius: 8px; font-size: 20px; }
         
-        /* Dashboard */
+        /* Progress Card */
         .stats-card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .progress-container { background: #e9ecef; height: 8px; border-radius: 4px; margin-top: 5px; overflow: hidden; }
-        .progress-bar { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s; }
+        .progress-container { background: #e9ecef; height: 10px; border-radius: 5px; margin-top: 8px; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--primary); width: 0%; transition: width 0.5s; }
 
-        /* Belt Sections */
-        .belt-section { margin-bottom: 30px; }
-        .belt-header { font-size: 1.1em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 3px solid; display: flex; justify-content: space-between; align-items: center; }
+        /* Syllabus Layout */
+        .belt-section { margin-bottom: 30px; border-radius: 10px; overflow: hidden; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .belt-header { padding: 15px; font-weight: 800; text-transform: uppercase; color: white; display: flex; justify-content: space-between; align-items: center; }
         
-        /* Belt Colors */
-        .b-white { border-color: #bdc3c7; color: #7f8c8d; }
-        .b-yellow { border-color: #f1c40f; color: #d4ac0d; }
-        .b-orange { border-color: #e67e22; color: #d35400; }
-        .b-green { border-color: #27ae60; color: #219150; }
-        .b-blue { border-color: #2980b9; color: #0055A4; }
-        .b-brown { border-color: #795548; color: #5d4037; }
+        /* Belt Themes */
+        .theme-white { background: #bdc3c7; color: #444; border: 1px solid #999; }
+        .theme-yellow { background: #f1c40f; color: #444; }
+        .theme-orange { background: #e67e22; }
+        .theme-green { background: #27ae60; }
+        .theme-blue { background: #0055A4; }
+        .theme-brown { background: #5d4037; }
 
-        /* Technique Card */
-        .tech-card { background: white; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-left: 4px solid transparent; transition: transform 0.2s; }
-        .tech-card.mastered { opacity: 0.6; order: 99; } /* Push to bottom */
-        .tech-card.priority { border-left-color: #e74c3c; } /* Needs work */
+        .category-header { background: #f8f9fa; padding: 8px 15px; font-size: 0.85em; font-weight: bold; color: #7f8c8d; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #eee; margin-top: 0; }
+
+        /* Technique Items */
+        .tech-item { border-bottom: 1px solid #eee; padding: 0; transition: background 0.2s; }
+        .tech-item.mastered { opacity: 0.5; background: #fafafa; }
+        .tech-head { padding: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .tech-name { font-weight: 600; font-size: 1.05em; }
         
-        .tech-head { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .tech-info strong { display: block; font-size: 1em; margin-bottom: 2px; }
-        .tech-cat { font-size: 0.75em; color: #7f8c8d; text-transform: uppercase; background: #f1f3f5; padding: 2px 6px; border-radius: 4px; }
         .score-badge { font-weight: bold; font-size: 0.9em; padding: 4px 8px; border-radius: 6px; min-width: 30px; text-align: center; }
+        .s-0 { background: #eee; color: #999; }
         .s-low { background: #fadbd8; color: #c0392b; }
         .s-mid { background: #fcf3cf; color: #f39c12; }
         .s-high { background: #d5f5e3; color: #27ae60; }
 
-        /* Details */
-        .tech-body { padding: 0 15px 15px; display: none; border-top: 1px solid #f1f3f5; }
-        .tech-body.open { display: block; animation: slideDown 0.2s ease-out; }
-        @keyframes slideDown { from { opacity:0; transform:translateY(-5px); } to { opacity:1; transform:translateY(0); } }
-
-        .slider-group { margin-top: 15px; }
-        .slider-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.85em; color: #555; margin-bottom: 8px; }
-        input[type=range] { padding: 0; margin: 0 10px; flex-grow: 1; height: 4px; }
+        /* Details Panel */
+        .tech-details { padding: 0 15px 15px; display: none; background: #fcfcfc; }
+        .tech-details.open { display: block; }
+        .slider-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.9em; color: #555; margin-bottom: 12px; }
+        input[type=range] { margin: 0 15px; flex-grow: 1; }
         
-        .action-row { margin-top: 15px; padding-top: 10px; border-top: 1px dashed #eee; display: flex; gap: 10px; }
-        .btn-link { background: #e74c3c; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 0.8em; font-weight: bold; }
-        .btn-edit { background: none; border: none; text-decoration: underline; color: #7f8c8d; cursor: pointer; font-size: 0.8em; }
-        
-        #input-link { display: none; width: 100%; margin-top: 10px; }
+        .vid-btn { display: block; width: 100%; text-align: center; background: #c4302b; color: white; padding: 10px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -65,120 +59,108 @@
 <div class="controls-area">
     <div class="control-row">
         <select id="userSelect" onchange="app.switchUser()">
-            <option value="Dad">🥋 Dad (Blue Belt)</option>
-            <option value="Son1">👦 Son 1</option>
-            <option value="Son2">👦 Son 2</option>
+            <option value="eric">Éric (Blue Belt)</option>
+            <option value="vincent">Vincent (Green-Orange)</option>
+            <option value="olivier">Olivier (Yellow-White)</option>
         </select>
-        <button class="btn-icon" onclick="app.exportData()" title="Backup">💾</button>
+        <button class="btn-icon" onclick="app.clearData()" title="Clear Data">🗑️</button>
+        <button class="btn-icon" onclick="app.exportData()" title="Save">💾</button>
     </div>
-    <div class="control-row">
-        <input type="text" id="searchInput" placeholder="Find technique..." onkeyup="app.render()">
-        <select id="sortSelect" onchange="app.render()" style="max-width: 110px;">
-            <option value="belt">Sort: Belt</option>
-            <option value="weakest">Focus Mode</option>
-        </select>
-    </div>
+    <input type="text" id="search" placeholder="Search technique..." onkeyup="app.render()">
 </div>
 
 <div class="stats-card">
     <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-        <span style="font-weight:600; color:var(--primary)">Curriculum Progress</span>
-        <span id="xpDisplay">0%</span>
+        <span style="font-weight:bold; color:var(--primary)">Belt Progress</span>
+        <span id="progressText">0%</span>
     </div>
     <div class="progress-container">
         <div id="progressBar" class="progress-bar"></div>
     </div>
+    <div id="focusMsg" style="margin-top:10px; font-size:0.9em; color:#666; font-style:italic;"></div>
 </div>
 
 <div id="appContainer"></div>
 
 <script>
-// --- FULL SYLLABUS DATA (White to Brown) ---
-const syllabusData = [
-    // 6th Kyu to 5th Kyu (White-Yellow) [cite: 224-231]
-    { belt: "White-Yellow", css: "b-white", list: [
-        { n: "Tsuri-goshi", c: "Koshi-waza" },
-        { n: "Ko-soto-gari", c: "Ashi-waza" },
-        { n: "Hiza-guruma", c: "Ashi-waza" },
-        { n: "Uki-otoshi", c: "Te-waza" },
-        { n: "Tai-otoshi", c: "Te-waza" },
-        { n: "O-uchi-gari", c: "Ashi-waza" },
-        { n: "O-soto-otoshi", c: "Ashi-waza" },
-        { n: "Ko-uchi-gari", c: "Ashi-waza" },
-        { n: "Kesa-gatame", c: "Osaekomi" },
-        { n: "Kata-gatame", c: "Osaekomi" },
-        { n: "Kami-shiho-gatame", c: "Osaekomi" }
-    ]},
-    // 5th to 4th Kyu (Yellow-Orange) [cite: 254-257]
-    { belt: "Yellow-Orange", css: "b-yellow", list: [
-        { n: "Ippon-seoi-nage", c: "Te-waza" },
-        { n: "De-ashi-harai", c: "Ashi-waza" },
-        { n: "Sasae-tsurikomi-ashi", c: "Ashi-waza" },
-        { n: "O-soto-gari", c: "Ashi-waza" },
-        { n: "Seoi-nage", c: "Te-waza" },
-        { n: "Tsurikomi-goshi", c: "Koshi-waza" },
-        { n: "Okuri-ashi-harai", c: "Ashi-waza" },
-        { n: "Ushiro-kesa-gatame", c: "Osaekomi" },
-        { n: "Tate-shiho-gatame", c: "Osaekomi" },
-        { n: "Uki-gatame", c: "Osaekomi" }
-    ]},
-    // 4th to 3rd Kyu (Orange-Green) [cite: 280-282]
-    { belt: "Orange-Green", css: "b-orange", list: [
-        { n: "Harai-goshi", c: "Koshi-waza" },
-        { n: "Tani-otoshi", c: "Sutemi-waza" },
-        { n: "Sode-tsurikomi-goshi", c: "Koshi-waza" },
-        { n: "Yoko-tomoe-nage", c: "Sutemi-waza" },
-        { n: "Yoko-otoshi", c: "Sutemi-waza" },
-        { n: "Harai-tsurikomi-ashi", c: "Ashi-waza" },
-        { n: "Sumi-gaeshi", c: "Sutemi-waza" },
-        { n: "Tomoe-nage", c: "Sutemi-waza" },
-        { n: "Juji-gatame", c: "Kansetsu" },
-        { n: "Ude-garami", c: "Kansetsu" },
-        { n: "Nami-juji-jime", c: "Shime-waza" },
-        { n: "Gyaku-juji-jime", c: "Shime-waza" },
-        { n: "Kata-juji-jime", c: "Shime-waza" }
-    ]},
-    // 3rd to 2nd Kyu (Green-Blue) [cite: 292-293]
-    { belt: "Green-Blue", css: "b-green", list: [
-        { n: "Hane-goshi", c: "Koshi-waza" },
-        { n: "Ushiro-goshi", c: "Koshi-waza" },
-        { n: "Obi-tori-gaeshi", c: "Sutemi-waza" },
-        { n: "Seoi-otoshi", c: "Te-waza" },
-        { n: "Uchi-mata", c: "Ashi-waza" },
-        { n: "Hane-goshi-gaeshi", c: "Te-waza" },
-        { n: "Ko-uchi-gaeshi", c: "Ashi-waza" },
-        { n: "Uchi-mata-gaeshi", c: "Ashi-waza" },
-        { n: "Hadaka-jime", c: "Shime-waza" },
-        { n: "Okuri-eri-jime", c: "Shime-waza" },
-        { n: "Kataha-jime", c: "Shime-waza" }
-    ]},
-    // 2nd to 1st Kyu (Blue-Brown) [cite: 304-305]
-    { belt: "Blue-Brown", css: "b-blue", list: [
-        { n: "Koshi-guruma", c: "Koshi-waza" },
-        { n: "Harai-makikomi", c: "Sutemi-waza" },
-        { n: "O-soto-makikomi", c: "Sutemi-waza" },
-        { n: "Sumi-otoshi", c: "Te-waza" },
-        { n: "Ura-nage", c: "Sutemi-waza" },
-        { n: "Yoko-guruma", c: "Sutemi-waza" },
-        { n: "Ko-uchi-makikomi", c: "Sutemi-waza" },
-        { n: "Yoko-wakare", c: "Sutemi-waza" },
-        { n: "Ryote-jime", c: "Shime-waza" },
-        { n: "Ashi-gatame", c: "Kansetsu" },
-        { n: "Sode-guruma-jime", c: "Shime-waza" },
-        { n: "Te-gatame", c: "Kansetsu" },
-        { n: "Tsukkomi-jime", c: "Shime-waza" },
-        { n: "Sankaku-gatame", c: "Kansetsu" },
-        { n: "Sankaku-jime", c: "Shime-waza" }
-    ]}
+// --- SYLLABUS DATA (Sources: Judo Canada Kyu Syllabus 2021) ---
+const syllabus = [
+    { 
+        id: "white-yellow", belt: "White to Yellow (5th Kyu)", theme: "theme-white",
+        sections: [
+            { title: "Tachi-waza (Throws)", list: [
+                "Tsuri-goshi", "Uki-goshi", "O-goshi", "Ko-soto-gari", "Ko-soto-gake", 
+                "Hiza-guruma", "Uki-otoshi", "Tai-otoshi", "O-uchi-gari", 
+                "O-soto-otoshi", "Ko-uchi-gari"
+            ]},
+            { title: "Ne-waza (Ground)", list: [
+                "Kesa-gatame", "Kuzure-kesa-gatame", "Yoko-shiho-gatame", 
+                "Kata-gatame", "Kami-shiho-gatame"
+            ]}
+        ]
+    },
+    { 
+        id: "yellow-orange", belt: "Yellow to Orange (4th Kyu)", theme: "theme-yellow",
+        sections: [
+            { title: "Tachi-waza (Throws)", list: [
+                "Ippon-seoi-nage", "Seoi-nage", "Eri-seoi-nage", "De-ashi-harai", 
+                "Sasae-tsurikomi-ashi", "O-soto-gari", "Tsurikomi-goshi", "Okuri-ashi-harai"
+            ]},
+            { title: "Ne-waza (Ground)", list: [
+                "Kuzure-kami-shiho-gatame", "Ushiro-kesa-gatame", "Tate-shiho-gatame", 
+                "Uki-gatame", "Ura-gatame"
+            ]}
+        ]
+    },
+    { 
+        id: "orange-green", belt: "Orange to Green (3rd Kyu)", theme: "theme-orange",
+        sections: [
+            { title: "Tachi-waza (Throws)", list: [
+                "Harai-goshi", "Tani-otoshi", "Sode-tsurikomi-goshi", "Yoko-tomoe-nage", 
+                "Yoko-otoshi", "Harai-tsurikomi-ashi", "Sumi-gaeshi", "Tomoe-nage"
+            ]},
+            { title: "Ne-waza (Ground)", list: [
+                "Sankaku-gatame (Osae)", "Nami-juji-jime", "Gyaku-juji-jime", 
+                "Kata-juji-jime", "Ude-garami", "Juji-gatame", "Ude-gatame"
+            ]}
+        ]
+    },
+    { 
+        id: "green-blue", belt: "Green to Blue (2nd Kyu)", theme: "theme-green",
+        sections: [
+            { title: "Tachi-waza (Throws)", list: [
+                "Hane-goshi", "Ushiro-goshi", "Obi-tori-gaeshi", "Seoi-otoshi", "Uchi-mata", 
+                "Hane-goshi-gaeshi", "Ko-uchi-gaeshi", "Uchi-mata-gaeshi"
+            ]},
+            { title: "Ne-waza (Ground)", list: [
+                "Hadaka-jime", "Okuri-eri-jime", "Kataha-jime", "Hiza-gatame", 
+                "Waki-gatame", "Hara-gatame", "Katate-jime"
+            ]}
+        ]
+    },
+    { 
+        id: "blue-brown", belt: "Blue to Brown (1st Kyu)", theme: "theme-blue",
+        sections: [
+            { title: "Tachi-waza (Throws)", list: [
+                "Koshi-guruma", "Harai-makikomi", "O-soto-makikomi", "Sumi-otoshi", 
+                "Ura-nage", "Yoko-guruma", "Ko-uchi-makikomi", "Yoko-wakare"
+            ]},
+            { title: "Ne-waza (Ground)", list: [
+                "Ryote-jime", "Ashi-gatame", "Sode-guruma-jime", "Te-gatame", 
+                "Tsukkomi-jime", "Sankaku-gatame (Kansetsu)", "Sankaku-jime"
+            ]}
+        ]
+    }
 ];
 
 const app = {
-    user: "Dad",
+    user: "eric",
     data: {},
 
     init() {
-        const stored = localStorage.getItem("judoTrackerV3");
-        this.data = stored ? JSON.parse(stored) : { "Dad": {}, "Son1": {}, "Son2": {} };
+        // Migration to V4 key to avoid conflicts
+        const stored = localStorage.getItem("judoTrackerV4");
+        this.data = stored ? JSON.parse(stored) : { "eric": {}, "vincent": {}, "olivier": {} };
         this.render();
     },
 
@@ -187,147 +169,164 @@ const app = {
         this.render();
     },
 
-    getScore(tech) {
-        const t = this.data[this.user][tech];
+    getScore(techName) {
+        const t = this.data[this.user][techName];
         if (!t) return 0;
-        return ((parseInt(t.migi||0) + parseInt(t.hidari||0) + parseInt(t.kuzushi||0) + parseInt(t.trans||0)) / 4).toFixed(1);
+        // Average of 4 metrics
+        const avg = (parseInt(t.migi||0) + parseInt(t.hidari||0) + parseInt(t.kuzushi||0) + parseInt(t.trans||0)) / 4;
+        return parseFloat(avg.toFixed(1));
     },
 
-    setVal(tech, aspect, val) {
-        if (!this.data[this.user][tech]) this.data[this.user][tech] = {};
-        this.data[this.user][tech][aspect] = val;
+    setVal(techName, aspect, val) {
+        if (!this.data[this.user][techName]) this.data[this.user][techName] = {};
+        this.data[this.user][techName][aspect] = val;
         
-        // Update display immediately without full re-render
-        document.getElementById(`val-${tech}-${aspect}`).innerText = val;
-        const newScore = this.getScore(tech);
-        const badge = document.getElementById(`badge-${tech}`);
+        // Live update UI
+        document.getElementById(`val-${techName}-${aspect}`).innerText = val;
+        const newScore = this.getScore(techName);
+        const badge = document.getElementById(`badge-${techName}`);
         badge.innerText = newScore;
         badge.className = `score-badge ${this.getBadgeClass(newScore)}`;
         
         this.save();
-        this.updateProgress();
-    },
-
-    saveLink(tech, url) {
-        if (!this.data[this.user][tech]) this.data[this.user][tech] = {};
-        this.data[this.user][tech].customLink = url;
-        this.save();
-        this.render(); // Re-render to update link button
-    },
-
-    toggleLinkInput(id) {
-        const el = document.getElementById(id);
-        el.style.display = el.style.display === "block" ? "none" : "block";
+        this.updateStats();
     },
 
     save() {
-        localStorage.setItem("judoTrackerV3", JSON.stringify(this.data));
-    },
-
-    exportData() {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.data));
-        const a = document.createElement('a');
-        a.href = dataStr;
-        a.download = "judo_mastery_backup.json";
-        a.click();
+        localStorage.setItem("judoTrackerV4", JSON.stringify(this.data));
     },
 
     getBadgeClass(score) {
-        if (score < 2) return "s-low";
-        if (score < 4) return "s-mid";
+        if (score === 0) return "s-0";
+        if (score < 3) return "s-low";
+        if (score < 4.5) return "s-mid";
         return "s-high";
     },
 
-    updateProgress() {
-        let total = 0, max = 0;
-        syllabusData.forEach(belt => {
-            belt.list.forEach(t => {
-                max += 20; // 4 aspects * 5
-                const d = this.data[this.user][t.n];
-                if(d) total += (parseInt(d.migi||0) + parseInt(d.hidari||0) + parseInt(d.kuzushi||0) + parseInt(d.trans||0));
-            });
+    toggleDetails(id) {
+        // Close others
+        document.querySelectorAll('.tech-details').forEach(el => {
+            if (el.id !== id) el.classList.remove('open');
         });
-        const pct = Math.round((total/max)*100);
-        document.getElementById('progressBar').style.width = pct + "%";
-        document.getElementById('xpDisplay').innerText = pct + "% Mastery";
+        document.getElementById(id).classList.toggle('open');
     },
 
-    toggleDetails(id) {
-        const el = document.getElementById(id);
-        const isOpen = el.classList.contains('open');
-        // Close all others
-        document.querySelectorAll('.tech-body').forEach(b => b.classList.remove('open'));
-        if(!isOpen) el.classList.add('open');
+    clearData() {
+        if(confirm("Reset all scores for all users?")) {
+            localStorage.removeItem("judoTrackerV4");
+            location.reload();
+        }
+    },
+
+    exportData() {
+        const str = JSON.stringify(this.data);
+        const blob = new Blob([str], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "judo_backup.json";
+        a.click();
+    },
+
+    updateStats() {
+        let total = 0, max = 0;
+        let weakTech = null;
+        
+        syllabus.forEach(level => {
+            level.sections.forEach(sec => {
+                sec.list.forEach(techName => {
+                    max += 20; // 4 aspects * 5
+                    const score = this.getScore(techName);
+                    total += (score * 4);
+                    if (score < 3 && !weakTech) weakTech = techName;
+                });
+            });
+        });
+
+        const pct = Math.round((total/max)*100);
+        document.getElementById("progressBar").style.width = pct + "%";
+        document.getElementById("progressText").innerText = pct + "%";
+        document.getElementById("focusMsg").innerHTML = weakTech 
+            ? `Next Priority: <strong>${weakTech}</strong>` 
+            : "Great job! Curriculum mastered.";
     },
 
     render() {
         const container = document.getElementById("appContainer");
-        const search = document.getElementById("searchInput").value.toLowerCase();
-        const sortMode = document.getElementById("sortSelect").value;
+        const search = document.getElementById("search").value.toLowerCase();
         container.innerHTML = "";
 
-        syllabusData.forEach(belt => {
-            // Filter list by search
-            let techniques = belt.list.filter(t => t.n.toLowerCase().includes(search));
-            if (techniques.length === 0) return;
+        syllabus.forEach(level => {
+            // Filter Logic
+            let hasMatch = false;
+            let levelHtml = "";
+            
+            level.sections.forEach(section => {
+                // Sort: Unmastered (Score < 4) first, Mastered last
+                let sortedList = [...section.list].sort((a,b) => {
+                    const sA = this.getScore(a);
+                    const sB = this.getScore(b);
+                    // If both mastered or both unmastered, sort alpha, else unmastered first
+                    if ((sA >= 4 && sB >= 4) || (sA < 4 && sB < 4)) return 0;
+                    return sA - sB; 
+                });
 
-            // Sort logic: "Weakest" mode brings score 0-2 to top, 5 to bottom
-            if (sortMode === 'weakest') {
-                techniques.sort((a, b) => this.getScore(a.n) - this.getScore(b.n));
-            }
+                let sectionHtml = "";
+                let visibleCount = 0;
 
-            // Create Belt Section
-            const beltDiv = document.createElement("div");
-            beltDiv.className = "belt-section";
-            beltDiv.innerHTML = `<div class="belt-header ${belt.css}"><span>${belt.belt}</span> <small>${techniques.length} Techs</small></div>`;
+                sortedList.forEach(techName => {
+                    if (!techName.toLowerCase().includes(search)) return;
+                    
+                    hasMatch = true;
+                    visibleCount++;
+                    const techId = techName.replace(/[^a-zA-Z0-9]/g, '');
+                    const d = this.data[this.user][techName] || {};
+                    const score = this.getScore(techName);
+                    const masteredClass = score >= 4 ? "mastered" : "";
+                    const videoLink = `https://www.youtube.com/results?search_query=judo+${techName.replace(/\s/g, '+')}+tutorial`;
 
-            // Render cards
-            techniques.forEach(t => {
-                const score = this.getScore(t.n);
-                const d = this.data[this.user][t.n] || {};
-                const link = d.customLink || `https://www.youtube.com/results?search_query=judo+${t.n.replace(/\s/g, '+')}+tutorial`;
-                const techId = t.n.replace(/\s/g, '');
-                
-                // Add class for visual sorting (fades out mastered items)
-                const masterClass = score >= 4.0 ? "mastered" : "priority";
-
-                const card = `
-                <div class="tech-card ${masterClass}">
-                    <div class="tech-head" onclick="app.toggleDetails('b-${techId}')">
-                        <div class="tech-info">
-                            <strong>${t.n}</strong>
-                            <span class="tech-cat">${t.c}</span>
+                    sectionHtml += `
+                    <div class="tech-item ${masteredClass}">
+                        <div class="tech-head" onclick="app.toggleDetails('d-${techId}')">
+                            <span class="tech-name">${techName}</span>
+                            <span id="badge-${techName}" class="score-badge ${this.getBadgeClass(score)}">${score}</span>
                         </div>
-                        <div id="badge-${t.n}" class="score-badge ${this.getBadgeClass(score)}">${score}</div>
-                    </div>
-                    <div id="b-${techId}" class="tech-body">
-                        <div class="slider-group">
-                            ${this.renderSlider(t.n, 'migi', 'Migi (Right)', d.migi)}
-                            ${this.renderSlider(t.n, 'hidari', 'Hidari (Left)', d.hidari)}
-                            ${this.renderSlider(t.n, 'kuzushi', 'Kuzushi', d.kuzushi)}
-                            ${this.renderSlider(t.n, 'trans', 'Transition', d.trans)}
+                        <div id="d-${techId}" class="tech-details">
+                            ${this.renderSlider(techName, 'migi', 'Right (Migi)', d.migi)}
+                            ${this.renderSlider(techName, 'hidari', 'Left (Hidari)', d.hidari)}
+                            ${this.renderSlider(techName, 'kuzushi', 'Kuzushi', d.kuzushi)}
+                            ${this.renderSlider(techName, 'trans', 'Transition', d.trans)}
+                            <a href="${videoLink}" target="_blank" class="vid-btn">▶ Watch Tutorial</a>
                         </div>
-                        <div class="action-row">
-                            <a href="${link}" target="_blank" class="btn-link">▶ Video</a>
-                            <button class="btn-edit" onclick="app.toggleLinkInput('in-${techId}')">Edit Link</button>
-                        </div>
-                        <input type="text" id="in-${techId}" style="display:none; width:90%; margin-top:10px;" 
-                               placeholder="Paste YouTube URL..." onchange="app.saveLink('${t.n}', this.value)" value="${d.customLink||''}">
-                    </div>
-                </div>`;
-                beltDiv.insertAdjacentHTML('beforeend', card);
+                    </div>`;
+                });
+
+                if (visibleCount > 0) {
+                    levelHtml += `<div class="category-header">${section.title}</div>${sectionHtml}`;
+                }
             });
-            container.appendChild(beltDiv);
+
+            if (hasMatch) {
+                const beltBlock = document.createElement("div");
+                beltBlock.className = "belt-section";
+                beltBlock.innerHTML = `
+                    <div class="belt-header ${level.theme}">
+                        <span>${level.belt}</span>
+                    </div>
+                    ${levelHtml}
+                `;
+                container.appendChild(beltBlock);
+            }
         });
-        this.updateProgress();
+        this.updateStats();
     },
 
     renderSlider(tech, key, label, val = 0) {
         return `
         <div class="slider-row">
-            <span>${label}</span>
+            <span style="width:90px;">${label}</span>
             <input type="range" min="0" max="5" value="${val}" oninput="app.setVal('${tech}', '${key}', this.value)">
-            <span id="val-${tech}-${key}" style="width:10px; font-weight:bold;">${val}</span>
+            <span id="val-${tech}-${key}" style="width:15px; font-weight:bold; text-align:right;">${val}</span>
         </div>`;
     }
 };
